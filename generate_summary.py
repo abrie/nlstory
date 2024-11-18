@@ -13,6 +13,13 @@ def fetch_issues():
             title
             body
             url
+            linkedPullRequests(first: 10) {
+              nodes {
+                title
+                url
+                merged
+              }
+            }
           }
         }
       }
@@ -32,7 +39,15 @@ def generate_html(issues):
     <h1>Summary of Issues</h1>
     <ul>
     {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}
+        {% if issue.linkedPullRequests.nodes|length > 0 %}
+        <ul>
+          {% for pr in issue.linkedPullRequests.nodes %}
+          <li><a href="{{ pr.url }}">{{ pr.title }}</a>{% if pr.merged %} (Merged){% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
     {% endfor %}
     </ul>
     </body>
