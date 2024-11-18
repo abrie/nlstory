@@ -9,7 +9,13 @@ def fetch_issues():
       repository(owner: "abrie", name: "nl12") {
         issues(first: 100) {
           nodes {
-            __typename
+            title
+            body
+            url
+          }
+        }
+        pullRequests(first: 100) {
+          nodes {
             title
             body
             url
@@ -22,7 +28,9 @@ def fetch_issues():
     response = requests.post(url, json={'query': query}, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
-    return [issue for issue in response.json()['data']['repository']['issues']['nodes'] if issue['__typename'] == 'Issue']
+    issues = response.json()['data']['repository']['issues']['nodes']
+    pull_requests = response.json()['data']['repository']['pullRequests']['nodes']
+    return issues + pull_requests
 
 def generate_html(issues):
     template = jinja2.Template("""
