@@ -40,6 +40,9 @@ def get_issues(repository, token):
         variables = {"repo": repository, "cursor": cursor}
         response = requests.post(url, headers=headers, json={"query": query, "variables": variables})
         data = response.json()
+        if "data" not in data:
+            print("Error: 'data' key not found in the response JSON")
+            break
         issues.extend(data["data"]["repository"]["issues"]["edges"])
         if not data["data"]["repository"]["issues"]["pageInfo"]["hasNextPage"]:
             break
