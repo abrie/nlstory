@@ -19,6 +19,7 @@ def fetch_issues():
             title
             body
             url
+            merged
           }
         }
       }
@@ -35,12 +36,19 @@ def fetch_issues():
 def generate_html(issues):
     template = jinja2.Template("""
     <html>
-    <head><title>Summary of Issues</title></head>
+    <head>
+      <title>Summary of Issues</title>
+      <style>
+        .merged {
+          color: green;
+        }
+      </style>
+    </head>
     <body>
     <h1>Summary of Issues</h1>
     <ul>
     {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+      <li class="{{ 'merged' if issue.merged else '' }}"><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
     {% endfor %}
     </ul>
     </body>
