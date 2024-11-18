@@ -13,6 +13,15 @@ def fetch_issues():
             title
             body
             url
+            closingIssuesReferences(first: 10) {
+              nodes {
+                __typename
+                title
+                body
+                url
+                merged
+              }
+            }
           }
         }
       }
@@ -24,15 +33,37 @@ def fetch_issues():
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
     return [issue for issue in response.json()['data']['repository']['issues']['nodes'] if issue['__typename'] == 'Issue']
 
+def fetch_pull_requests(issue):
+    return issue['closingIssuesReferences']['nodes']
+
 def generate_html(issues):
     template = jinja2.Template("""
     <html>
-    <head><title>Summary of Issues</title></head>
+    <head>
+      <title>Summary of Issues</title>
+      <style>
+        .merged-pr {
+          font-weight: bold;
+          color: green;
+        }
+      </style>
+    </head>
     <body>
     <h1>Summary of Issues</h1>
     <ul>
     {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+      <li>
+        <a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}
+        {% if issue.closingIssuesReferences.nodes %}
+        <ul>
+          {% for pr in issue.closingIssuesReferences.nodes %}
+          <li class="{{ 'merged-pr' if pr.merged else '' }}">
+            <a href="{{ pr.url }}">{{ pr.title }}</a>: {{ pr.body }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
     {% endfor %}
     </ul>
     </body>
