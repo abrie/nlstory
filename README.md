@@ -8,6 +8,7 @@ This tool generates a summary list of all non-pull request issues in the reposit
 - Fetches issues from the repository using the python GraphQL API.
 - Generates HTML output for the summary list using the jinja2 Template library.
 - Only lists issues that are not pull requests by filtering nodes based on the `__typename` field in the GraphQL response.
+- Lists associated PR requests for each issue using `timelineItems` with `CrossReferencesEvent` and `PullRequest`.
 
 ### Usage
 1. Set the `GITHUB_TOKEN` environment variable for authentication.

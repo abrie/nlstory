@@ -13,6 +13,18 @@ def fetch_issues():
             title
             body
             url
+            timelineItems(first: 100) {
+              nodes {
+                ... on CrossReferencedEvent {
+                  source {
+                    ... on PullRequest {
+                      number
+                      title
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -32,7 +44,17 @@ def generate_html(issues):
     <h1>Summary of Issues</h1>
     <ul>
     {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}
+        {% if issue.timelineItems.nodes|length > 0 %}
+          <ul>
+          {% for event in issue.timelineItems.nodes %}
+            {% if event.source.__typename == 'PullRequest' %}
+              <li>PR #{{ event.source.number }}: {{ event.source.title }}</li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
     {% endfor %}
     </ul>
     </body>
