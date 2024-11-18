@@ -13,6 +13,19 @@ def fetch_issues():
             title
             body
             url
+            timelineItems(itemTypes: CROSS_REFERENCED_EVENT, first: 100) {
+              nodes {
+                ... on CrossReferencedEvent {
+                  source {
+                    __typename
+                    ... on PullRequest {
+                      title
+                      url
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -22,7 +35,13 @@ def fetch_issues():
     response = requests.post(url, json={'query': query}, headers=headers)
     if response.status_code != 200:
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
-    return [issue for issue in response.json()['data']['repository']['issues']['nodes'] if issue['__typename'] == 'Issue']
+    issues = []
+    for issue in response.json()['data']['repository']['issues']['nodes']:
+        if issue['__typename'] == 'Issue':
+            prs = [item['source'] for item in issue['timelineItems']['nodes'] if item['source']['__typename'] == 'PullRequest']
+            issue['associatedPRs'] = prs
+            issues.append(issue)
+    return issues
 
 def generate_html(issues):
     template = jinja2.Template("""
@@ -32,7 +51,16 @@ def generate_html(issues):
     <h1>Summary of Issues</h1>
     <ul>
     {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+      <li>
+        <a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}
+        {% if issue.associatedPRs %}
+          <ul>
+          {% for pr in issue.associatedPRs %}
+            <li><a href="{{ pr.url }}">{{ pr.title }}</a></li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
     {% endfor %}
     </ul>
     </body>
