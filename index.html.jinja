@@ -7,7 +7,14 @@
     <title>Vite + TS</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <h1>Summary of Issues</h1>
+      <ul>
+        {% for issue in issues %}
+          <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+        {% endfor %}
+      </ul>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

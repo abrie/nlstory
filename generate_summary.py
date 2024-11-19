@@ -33,25 +33,15 @@ def fetch_issues():
     return issues + pull_requests
 
 def generate_html(issues):
-    template = jinja2.Template("""
-    <html>
-    <head><title>Summary of Issues</title></head>
-    <body>
-    <h1>Summary of Issues</h1>
-    <ul>
-    {% for issue in issues %}
-      <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
-    {% endfor %}
-    </ul>
-    </body>
-    </html>
-    """)
+    template_loader = jinja2.FileSystemLoader(searchpath="./")
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template("index.html.jinja")
     return template.render(issues=issues)
 
 def main():
     issues = fetch_issues()
     html_output = generate_html(issues)
-    with open("summary.html", "w") as f:
+    with open("index.html", "w") as f:
         f.write(html_output)
 
 if __name__ == "__main__":
