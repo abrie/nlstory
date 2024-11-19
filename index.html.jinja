@@ -14,12 +14,14 @@
           <li>
             {% if issue.is_pr %}
               <details>
-                <summary>PR {{ issue.number }}: {{ issue.title }}</summary>
-                {% if issue.merged %}
-                  <span style="color: green;">(Merged)</span>
-                {% else %}
-                  <span style="color: red;">(Not Merged)</span>
-                {% endif %}
+                <summary>
+                  PR {{ issue.number }}: {{ issue.title }}
+                  {% if issue.merged %}
+                    <span style="color: green;">(Merged)</span>
+                  {% else %}
+                    <span style="color: red;">(Not Merged)</span>
+                  {% endif %}
+                </summary>
                 <ul>
                   {% for commit in issue.commits %}
                     <li>
@@ -37,12 +39,14 @@
                   {% for pr in issue.pull_requests %}
                     <li>
                       <details>
-                        <summary>PR {{ pr.number }}: {{ pr.title }}</summary>
-                        {% if pr.merged %}
-                          <span style="color: green;">(Merged)</span>
-                        {% else %}
-                          <span style="color: red;">(Not Merged)</span>
-                        {% endif %}
+                        <summary>
+                          PR {{ pr.number }}: {{ pr.title }}
+                          {% if pr.merged %}
+                            <span style="color: green;">(Merged)</span>
+                          {% else %}
+                            <span style="color: red;">(Not Merged)</span>
+                          {% endif %}
+                        </summary>
                         <ul>
                           {% for commit in pr.commits %}
                             <li>
