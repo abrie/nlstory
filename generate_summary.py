@@ -30,7 +30,7 @@ def fetch_issues():
               nodes {
                 commit {
                   message
-                  hash
+                  oid
                 }
               }
             }
@@ -51,7 +51,7 @@ def fetch_issues():
     for pr in pull_requests:
         pr['is_pr'] = True
         pr['merged'] = pr.get('merged', False)
-        pr['commits'] = [{'message': markdown2.markdown(commit['commit']['message']), 'hash': commit['commit']['hash']} for commit in pr['commits']['nodes']]  # P8dc9
+        pr['commits'] = [{'message': markdown2.markdown(commit['commit']['message']), 'hash': commit['commit']['oid']} for commit in pr['commits']['nodes']]  # P8dc9
         for commit in pr['commits']:
             referenced_issues = parse_commit_message_for_issue_references(commit['message'])
             for issue_number in referenced_issues:
