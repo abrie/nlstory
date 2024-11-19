@@ -11,7 +11,7 @@
       <h1>Summary of Issues</h1>
       <ul>
         {% for issue in issues %}
-          <li><a href="{{ issue.url }}">{{ issue.title }}</a>: {{ issue.body }}</li>
+          <li>{{ issue.number }}: {{ issue.title }}</li>
         {% endfor %}
       </ul>
     </div>
