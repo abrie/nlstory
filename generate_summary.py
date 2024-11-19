@@ -2,7 +2,7 @@ import os
 import requests
 import jinja2
 import re
-import markdown2  # P4528
+import markdown2
 
 def parse_commit_message_for_issue_references(commit_message):
     issue_references = re.findall(r'#(\d+)', commit_message)
@@ -36,6 +36,19 @@ def fetch_issues():
             }
           }
         }
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history(first: 100) {
+                nodes {
+                  message
+                  oid
+                  committedDate
+                }
+              }
+            }
+          }
+        }
       }
     }
     """
@@ -45,13 +58,14 @@ def fetch_issues():
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
     issues = response.json()['data']['repository']['issues']['nodes']
     pull_requests = response.json()['data']['repository']['pullRequests']['nodes']
+    main_commits = response.json()['data']['repository']['defaultBranchRef']['target']['history']['nodes']
     for issue in issues:
         issue['is_pr'] = False
         issue['pull_requests'] = []
     for pr in pull_requests:
         pr['is_pr'] = True
         pr['merged'] = pr.get('merged', False)
-        pr['commits'] = [{'message': markdown2.markdown(commit['commit']['message']), 'hash': commit['commit']['oid']} for commit in pr['commits']['nodes']]  # P8dc9
+        pr['commits'] = [{'message': markdown2.markdown(commit['commit']['message']), 'hash': commit['commit']['oid']} for commit in pr['commits']['nodes']]
         for commit in pr['commits']:
             referenced_issues = parse_commit_message_for_issue_references(commit['message'])
             for issue_number in referenced_issues:
@@ -59,7 +73,12 @@ def fetch_issues():
                     if issue['number'] == issue_number:
                         issue['pull_requests'].append(pr)
                         break
-    combined_list = issues + [pr for pr in pull_requests if not any(pr in issue['pull_requests'] for issue in issues)]
+    for commit in main_commits:
+        commit['is_pr'] = False
+        commit['title'] = commit['message']
+        commit['number'] = commit['oid']
+        commit['createdAt'] = commit['committedDate']
+    combined_list = issues + [pr for pr in pull_requests if not any(pr in issue['pull_requests'] for issue in issues)] + main_commits
     combined_list.sort(key=lambda x: x['createdAt'])
     return combined_list
 
