@@ -33,8 +33,8 @@
                 </ul>
               </details>
             {% else %}
-              Issue {{ issue.number }}: {{ issue.title }}
               {% if issue.pull_requests %}
+                Issue {{ issue.number }}: {{ issue.title }}
                 <ul>
                   {% for pr in issue.pull_requests %}
                     <li>
@@ -60,6 +60,8 @@
                     </li>
                   {% endfor %}
                 </ul>
+              {% else %}
+                Commit {{ issue.number }}: {{ issue.title }}
               {% endif %}
             {% endif %}
           </li>
