@@ -10,15 +10,13 @@ def fetch_issues():
         issues(first: 100) {
           nodes {
             title
-            body
-            url
+            number
           }
         }
         pullRequests(first: 100) {
           nodes {
             title
-            body
-            url
+            number
           }
         }
       }
