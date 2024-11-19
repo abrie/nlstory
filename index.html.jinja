@@ -28,6 +28,27 @@
               </ul>
             {% else %}
               Issue {{ issue.number }}: {{ issue.title }}
+              {% if issue.pull_requests %}
+                <ul>
+                  {% for pr in issue.pull_requests %}
+                    <li>
+                      PR {{ pr.number }}: {{ pr.title }}
+                      {% if pr.merged %}
+                        <span style="color: green;">(Merged)</span>
+                      {% else %}
+                        <span style="color: red;">(Not Merged)</span>
+                      {% endif %}
+                      <ul>
+                        {% for commit in pr.commits %}
+                          <li>
+                            <strong>Message:</strong> {{ commit.message }}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
             {% endif %}
           </li>
         {% endfor %}
