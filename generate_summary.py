@@ -11,12 +11,14 @@ def fetch_issues():
           nodes {
             title
             number
+            createdAt
           }
         }
         pullRequests(first: 100) {
           nodes {
             title
             number
+            createdAt
           }
         }
       }
@@ -32,7 +34,9 @@ def fetch_issues():
         issue['is_pr'] = False
     for pr in pull_requests:
         pr['is_pr'] = True
-    return issues + pull_requests
+    combined_list = issues + pull_requests
+    combined_list.sort(key=lambda x: x['createdAt'])
+    return combined_list
 
 def generate_html(issues):
     template_loader = jinja2.FileSystemLoader(searchpath="./")
