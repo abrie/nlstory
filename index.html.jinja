@@ -23,6 +23,8 @@
                 {% for commit in issue.commits %}
                   <li>
                     <strong>Message:</strong> {{ commit.message | safe }}
+                    <br>
+                    <strong>Hash:</strong> {{ commit.hash }}
                   </li>
                 {% endfor %}
               </ul>
@@ -42,6 +44,8 @@
                         {% for commit in pr.commits %}
                           <li>
                             <strong>Message:</strong> {{ commit.message | safe }}
+                            <br>
+                            <strong>Hash:</strong> {{ commit.hash }}
                           </li>
                         {% endfor %}
                       </ul>
