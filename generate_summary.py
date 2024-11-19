@@ -2,6 +2,7 @@ import os
 import requests
 import jinja2
 import re
+import markdown2  # P4528
 
 def parse_commit_message_for_issue_references(commit_message):
     issue_references = re.findall(r'#(\d+)', commit_message)
@@ -49,7 +50,7 @@ def fetch_issues():
     for pr in pull_requests:
         pr['is_pr'] = True
         pr['merged'] = pr.get('merged', False)
-        pr['commits'] = [{'message': commit['commit']['message']} for commit in pr['commits']['nodes']]
+        pr['commits'] = [{'message': markdown2.markdown(commit['commit']['message'])} for commit in pr['commits']['nodes']]  # P8dc9
         for commit in pr['commits']:
             referenced_issues = parse_commit_message_for_issue_references(commit['message'])
             for issue_number in referenced_issues:
