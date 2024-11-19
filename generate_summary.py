@@ -24,6 +24,7 @@ def fetch_issues():
               nodes {
                 commit {
                   messageHeadline
+                  message
                 }
               }
             }
@@ -43,7 +44,7 @@ def fetch_issues():
     for pr in pull_requests:
         pr['is_pr'] = True
         pr['merged'] = pr.get('merged', False)
-        pr['commits'] = [commit['commit']['messageHeadline'] for commit in pr['commits']['nodes']]
+        pr['commits'] = [{'messageHeadline': commit['commit']['messageHeadline'], 'message': commit['commit']['message']} for commit in pr['commits']['nodes']]
     combined_list = issues + pull_requests
     combined_list.sort(key=lambda x: x['createdAt'])
     return combined_list
