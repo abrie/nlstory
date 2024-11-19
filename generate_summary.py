@@ -19,6 +19,7 @@ def fetch_issues():
             title
             number
             createdAt
+            merged
           }
         }
       }
@@ -34,6 +35,7 @@ def fetch_issues():
         issue['is_pr'] = False
     for pr in pull_requests:
         pr['is_pr'] = True
+        pr['merged'] = pr.get('merged', False)
     combined_list = issues + pull_requests
     combined_list.sort(key=lambda x: x['createdAt'])
     return combined_list
