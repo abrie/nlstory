@@ -22,7 +22,6 @@
               <ul>
                 {% for commit in issue.commits %}
                   <li>
-                    <strong>Headline:</strong> {{ commit.messageHeadline }}<br>
                     <strong>Message:</strong> {{ commit.message }}
                   </li>
                 {% endfor %}
