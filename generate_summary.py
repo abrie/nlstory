@@ -1,6 +1,11 @@
 import os
 import requests
 import jinja2
+import re
+
+def parse_commit_message_for_issue_references(commit_message):
+    issue_references = re.findall(r'#(\d+)', commit_message)
+    return [int(issue) for issue in issue_references]
 
 def fetch_issues():
     url = "https://api.github.com/graphql"
@@ -40,11 +45,19 @@ def fetch_issues():
     pull_requests = response.json()['data']['repository']['pullRequests']['nodes']
     for issue in issues:
         issue['is_pr'] = False
+        issue['pull_requests'] = []
     for pr in pull_requests:
         pr['is_pr'] = True
         pr['merged'] = pr.get('merged', False)
         pr['commits'] = [{'message': commit['commit']['message']} for commit in pr['commits']['nodes']]
-    combined_list = issues + pull_requests
+        for commit in pr['commits']:
+            referenced_issues = parse_commit_message_for_issue_references(commit['message'])
+            for issue_number in referenced_issues:
+                for issue in issues:
+                    if issue['number'] == issue_number:
+                        issue['pull_requests'].append(pr)
+                        break
+    combined_list = issues + [pr for pr in pull_requests if not any(pr in issue['pull_requests'] for issue in issues)]
     combined_list.sort(key=lambda x: x['createdAt'])
     return combined_list
 
