@@ -11,7 +11,18 @@
       <h1>Summary of Issues and Pull Requests</h1>
       <ul>
         {% for issue in issues %}
-          <li>{% if issue.is_pr %}PR {% endif %}{{ issue.number }}: {{ issue.title }}</li>
+          <li>
+            {% if issue.is_pr %}
+              PR {{ issue.number }}: {{ issue.title }}
+              {% if issue.merged %}
+                <span style="color: green;">(Merged)</span>
+              {% else %}
+                <span style="color: red;">(Not Merged)</span>
+              {% endif %}
+            {% else %}
+              Issue {{ issue.number }}: {{ issue.title }}
+            {% endif %}
+          </li>
         {% endfor %}
       </ul>
     </div>
