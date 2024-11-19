@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Summary of Commits</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Summary of Commits</h1>
+      <ul>
+        {% for commit in commits %}
+          <li>
+            <strong>Message:</strong> {{ commit.commit.message | safe }}
+            <br>
+            <strong>Hash:</strong> {{ commit.sha }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
