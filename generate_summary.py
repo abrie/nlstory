@@ -28,6 +28,10 @@ def fetch_issues():
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
     issues = response.json()['data']['repository']['issues']['nodes']
     pull_requests = response.json()['data']['repository']['pullRequests']['nodes']
+    for issue in issues:
+        issue['is_pr'] = False
+    for pr in pull_requests:
+        pr['is_pr'] = True
     return issues + pull_requests
 
 def generate_html(issues):
