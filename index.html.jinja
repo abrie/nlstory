@@ -21,7 +21,9 @@
               {% endif %}
               <ul>
                 {% for commit in issue.commits %}
-                  <li>{{ commit }}</li>
+                  <li>
+                    <strong>Message:</strong> {{ commit.message }}
+                  </li>
                 {% endfor %}
               </ul>
             {% else %}
