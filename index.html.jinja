@@ -11,7 +11,7 @@
       <h1>Summary of Issues</h1>
       <ul>
         {% for issue in issues %}
-          <li>{{ issue.number }}: {{ issue.title }}</li>
+          <li>{% if issue.is_pr %}PR {% endif %}{{ issue.number }}: {{ issue.title }}</li>
         {% endfor %}
       </ul>
     </div>
