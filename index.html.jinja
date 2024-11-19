@@ -19,6 +19,11 @@
               {% else %}
                 <span style="color: red;">(Not Merged)</span>
               {% endif %}
+              <ul>
+                {% for commit in issue.commits %}
+                  <li>{{ commit }}</li>
+                {% endfor %}
+              </ul>
             {% else %}
               Issue {{ issue.number }}: {{ issue.title }}
             {% endif %}
