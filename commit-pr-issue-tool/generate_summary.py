@@ -31,7 +31,9 @@ def fetch_commits():
     if response.status_code != 200:
         raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
     commits = response.json()['data']['repository']['defaultBranchRef']['target']['history']['edges']
-    return [{'message': markdown2.markdown(commit['node']['message']), 'sha': commit['node']['oid'], 'date': commit['node']['committedDate']} for commit in commits]
+    commits_list = [{'message': markdown2.markdown(commit['node']['message']), 'sha': commit['node']['oid'], 'date': commit['node']['committedDate']} for commit in commits]
+    commits_list.sort(key=lambda x: x['date'])
+    return commits_list
 
 def generate_html(commits):
     template_loader = jinja2.FileSystemLoader(searchpath="./commit-pr-issue-tool")
